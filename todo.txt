@@ -1,0 +1,17 @@
+tutorials:
+
+node.js
+scala.js
+reakt (js)
+angular (js)
+bootsrap (?js)
+
+svg !!!
+
+svg chart
+
+git
+
+posix regex in scala ?
+
+NOTES !
