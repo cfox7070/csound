@@ -101,9 +101,18 @@ object Note {
 
    def apply(str : String):Note ={
 	val rcom="""^([^\/]*)(?:\/\/(.*))?$""".r //value and comments
-  	val rcom(vl,co)=str
+	val pitchex="^[cdefgahr].".r
+	val inum="^i([0-9]+)".r
+	
+  	var rcom(vl,co)=str
+	if(co!=null && co!="") co="//"+co
     val vls=vl.split("[ \t]+")
+	var nts=new ArrayBuffer[String]()
 	for (s <- vls){
+		s match {
+			case pitchex(_*) => nts+=s
+			case inum(in) => curNinst=in.toInt
+		}
 	}
     new Note(curNinst,curStart,curDur,curPitch,curOkt,co)
    }
