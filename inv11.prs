@@ -17,9 +17,9 @@ f
 d
 e
 c
-g    dr8
+g    dur8
 c9
-h8
+b8
 c9
 //bottom
 r7 dur16 st2
@@ -32,30 +32,30 @@ e
 c    
     
 m4 2
-
+//top
 d9 dur16
 g8
 a
-h
+b
 c9
 a8
-h
+b
 g
 d9 dur8
 g
 f
 g
-
+//bottom
 g7 dur8 st0
 g6
 
 r7 dur16 st2
 g
 a
-h
+b
 c8
 a7
-h
+b
 g
 
 m4 3
