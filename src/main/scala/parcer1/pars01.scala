@@ -122,20 +122,22 @@ object Note {
 				 "b" ->"11",
 				 "b#"->"00",
 				 "r" ->"")
-	val durVal = Map( "1" ->4.0f, 
+				 
+	def durVal(dv:Float)= 4/dv
+/* 	val durVal = Map( "1" ->4.0f, 
 					  "2" ->2f,
 					  "4" ->1f,
 					  "8" ->0.5f,
 					  "16"->0.25f,
 					  "32"->0.125f,
 					  "64"->(1.0/16.0).toFloat)
-
+ */
    def apply(str : String, sco:ArrayBuffer[ScoreElem]):Unit ={
 	val rcom="""^([^\/]*)(?:\/\/(.*))?$""".r //value and comments
 	val pitchex="^([cdefgar#b]+)([0-9]*)".r
 	val inum="^i([0-9]+)".r
-	val dur="^dur([0-9]+)".r
-	val st="^st([0-9]+)".r
+	val dur="^dur([0-9.]+)".r
+	val st="^st([0-9.]+)".r
 	
   	var rcom(vl,co)=str
 	if(co!=null && co!="") co="//"+co
@@ -145,7 +147,7 @@ object Note {
 		s match {
 			case pitchex(p,o) => { if (o!="")curOkt=o.toInt; nts+= ((curOkt,lpch(p),s))}
 			case inum(in) => curNinst=in.toInt
-			case dur(nm) => curDur=durVal(nm)
+			case dur(nm) => curDur=durVal(nm.toFloat)
 			case st(nm) => curStart=nm.toFloat
 			case _ =>
 		}

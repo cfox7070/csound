@@ -59,3 +59,103 @@ b
 g
 
 m4 3
+//top
+e9 dur16
+a
+g
+f
+
+e
+g
+f
+a
+
+g
+f
+e
+d
+
+c
+e
+d
+f
+//bottom
+c8 dur8 st0
+b7
+c8
+d
+
+e
+g7
+d
+b
+
+m4 4
+//top
+e9 dur16
+d
+c
+b8
+
+a
+c9
+b8
+d9
+
+c
+b8
+a
+g
+
+f#
+a
+g
+h
+//bottom
+c8 dur8 st0
+e7
+f#
+g
+
+a
+b
+c8 dur1.0625
+
+m4 5
+//top
+a8 dur8
+d
+
+c9 dur8.5
+d
+
+b8
+a
+g
+f#
+
+e
+g
+f#
+a
+//bottom
+d7 dur16 st0.0625
+e
+f#
+
+g
+e
+f#
+d
+
+g dur8
+b6
+c7
+d
+
+m4 6
+
+
+
+
+
