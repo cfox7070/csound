@@ -110,7 +110,7 @@ g
 f#
 a
 g
-h
+b
 //bottom
 c8 dur8 st0
 e7
@@ -119,15 +119,15 @@ g
 
 a
 b
-c8 dur1.0625
+c8 dur3.2
 
 m4 5
 //top
 a8 dur8
 d
 
-c9 dur8.5
-d
+c9 dur5.3333
+d  dur16
 
 b8
 a
@@ -139,7 +139,7 @@ g
 f#
 a
 //bottom
-d7 dur16 st0.0625
+d7 dur16 st0.25
 e
 f#
 
