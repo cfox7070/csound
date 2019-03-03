@@ -169,7 +169,6 @@ object score extends App with StrFns{
             println("No file specified")
       }else{     
         val fname=args(0)
-        println(fname)      // delete
         try {
             val src=Source.fromFile(fname)
             readFile(src.getLines)

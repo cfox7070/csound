@@ -25,13 +25,14 @@ instr 1
     kenv2 expseg 16000 + rnd(2000), 2, ival1, 4, 2000, 0, 2000
     kenv3 expseg 16000 + rnd(2000), 2, ival2, 4, 2000, 0, 2000
 
-    amix = a1 * 0.4 + a2 + 0.6
+    amix = a1 * 0.5 + a2 * 0.5
     amix = amix * kenv * iamp
 
     afilter1 moogladder amix, kenv2, 0.4 + rnd(0.1)
     afilter2 moogladder amix, kenv3, 0.4 + rnd(0.1)
 
-    outs afilter1, afilter2
+   outs afilter1, afilter2
+;    outs amix, amix
 
     chnmix afilter1, "left"
     chnmix afilter2, "right"
@@ -70,10 +71,10 @@ e
 <bsbPanel>
  <label>Widgets</label>
  <objectName/>
- <x>100</x>
- <y>100</y>
- <width>320</width>
- <height>240</height>
+ <x>0</x>
+ <y>0</y>
+ <width>0</width>
+ <height>0</height>
  <visible>true</visible>
  <uuid/>
  <bgcolor mode="nobackground">
