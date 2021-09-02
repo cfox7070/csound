@@ -62,7 +62,7 @@ class Measure (bits:Int,num:Int,cmts:String) extends ScoreElem(){ //comments in 
 //  m4 1 // comment
 //  (^[m]([0-9]+))[\t ]+([0-9])+([\t ]*\/\/.*)*$
     
-    override def outStr():String= s";Measure$num  $bits  "+ cmts 
+    override def outStr():String= s";Measure$bits $num    "+ cmts 
 
 }
 
@@ -72,13 +72,13 @@ object Measure {
         val rcom(vl,co)=str
         val rval="""m([0-9]+)\s+([0-9]+)""".r
         val rval(bits,num)=vl
- //       Note.curMStart=bits.toInt*(num.toInt-1)
- //       Note.curStart=0
+        Note.curMStart=bits.toInt*(num.toInt-1)
+        Note.curStart=0
         new Measure(bits.toInt,num.toInt,co)
    }
    def apply(bits:Int,num:Int,cmts:String):Measure ={        
- //       Note.curMStart=bits*(num-1)
- //       Note.curStart=0
+        Note.curMStart=bits*(num-1)
+        Note.curStart=0
         new Measure(bits,num,cmts)
    }
 }
@@ -95,11 +95,11 @@ class Note (st:String, ninst:Int,start:Float,dur:Float,pitch:String,cmts:String)
 }
 
 object Note {
-   var curInstr:ArrayBuffer[String]=ArrayBuffer("1")
-   var curStart:ArrayBuffer[Float]=ArrayBuffer(0f)
-//   var curMStart:Float=0f
-   var curDur:ArrayBuffer[Float]=ArrayBuffer(0f)
-   var curOkt:ArrayBuffer[Int]=ArrayBuffer(8)
+   var curNinst:Int=1
+   var curStart:Float=0f
+   var curMStart:Float=0f
+   var curDur:Float=0f
+   var curOkt:Int=8
    
     val lpch=Map("c" ->"00",
 				 "c#"->"01",
@@ -123,43 +123,23 @@ object Note {
 				 "b#"->"00",
 				 "r" ->"")
 				 
-//	def durVal(dv:Float)= 4/dv
- 	val durVal = Map( "1" ->4.0f, 
+	def durVal(dv:Float)= 4/dv
+/* 	val durVal = Map( "1" ->4.0f, 
 					  "2" ->2f,
 					  "4" ->1f,
 					  "8" ->0.5f,
-					  "8_3" -> 1f/3f,
 					  "16"->0.25f,
-					  "16_3" -> 0.5f/3f,
-					  "16_6" -> 1f/6f,
 					  "32"->0.125f,
 					  "64"->(1.0/16.0).toFloat)
- 
+ */
    def apply(str : String, sco:ArrayBuffer[ScoreElem]):Unit ={
 	val rcom="""^([^\/]*)(?:\/\/(.*))?$""".r //value and comments
 	val pitchex="^([cdefgar#b]+)([0-9]*)".r
 	val inum="^i([0-9]+)".r
-//	val dur="^dur([0-9.]+)".r
-//	val st="^st([0-9.]+)".r
-//voices
-    println("string: "+str)
-	val voices=str.split("[|]{2}")
-	for (i <- 0 to voices.size){
-		val v=voices(i)
-		println("v: "+v)
-		if(v !="") {
-			val vdt=v.split(" ").foreach(_.trim)
-			for (j <- 0 to vdt.size){
-				
-			}
-		}
-	}
-	//.foreach((s:String) =>{s.trim; if(s == null) println("null");if(s =="") println("s")})
-	//println(voices.mkString(";"))
-	//for (v <- voices)
-	//	print(v+"|/\\|")
-	println()
-/*  	var rcom(vl,co)=str
+	val dur="^dur([0-9.]+)".r
+	val st="^st([0-9.]+)".r
+	
+  	var rcom(vl,co)=str
 	if(co!=null && co!="") co="//"+co
     val vls=vl.split("[ \t]+")
 	var nts=new ArrayBuffer[(Int,String,String)]()
@@ -168,15 +148,15 @@ object Note {
 			case pitchex(p,o) => { if (o!="")curOkt=o.toInt; nts+= ((curOkt,lpch(p),s))}
 			case inum(in) => curNinst=in.toInt
 			case dur(nm) => curDur=durVal(nm.toFloat)
-//			case st(nm) => curStart=nm.toFloat
+			case st(nm) => curStart=nm.toFloat
 			case _ =>
 		}
-	}963 666 9231
+	}
 	//println(nts)
 	for ((o,p,st) <- nts){
 		if(p!="") sco+=new Note(st,curNinst,curMStart+curStart,curDur,s"$o.$p",co)
 	}
-	curStart+=curDur*/
+	curStart+=curDur
    }
 }
 
@@ -211,20 +191,20 @@ object score extends App with StrFns{
     }
    
    def readFile(iter:Iterator[String]){
- //      val note="^[cdefgabr].*".r
-      val measure="^([m].+)".r
- //     val measure="""^[m]([0-9]+)[\t ]+([0-9])+(?:[\t ]*\/\/(.*))?$""".r
- //     val comments="^//(.*)".r
+       val note="^[cdefgabr].*".r
+ //     val measure="^m.*".r
+      val measure="""^[m]([0-9]+)[\t ]+([0-9])+(?:[\t ]*\/\/(.*))?$""".r
+      val comments="^//(.*)".r
       val native="^<.*".r
       while(iter.hasNext){
         val tstr=iter.next.trim
         tstr match {
             case ""=>
-//            case note(_*) => println("note");Note(tstr,mSco)      // delete
-            case measure(m) =>{println(s"measure $m")/*;mSco += Measure(bits.toInt,num.toInt,strOrCms(cmt))*/ }    
-//            case comments(cmt) => {println(s";$cmt");mSco+=Comments(strOrCms(cmt)) }      // delete
+            case note(_*) => println("note");Note(tstr,mSco)      // delete
+            case measure(bits,num,cmt) =>{println(s"$bits $num $cmt");mSco += Measure(bits.toInt,num.toInt,strOrCms(cmt)) }    
+            case comments(cmt) => {println(s";$cmt");mSco+=Comments(strOrCms(cmt)) }      // delete
             case native(_*) => {println(";native");mSco+=Native(tstr,iter) }       // delete.length>0
-            case _ => println("maybe note");Note(tstr,mSco)
+            case _ =>
         }
       }
    }   
