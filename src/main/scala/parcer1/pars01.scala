@@ -7,7 +7,7 @@ import scala.collection.mutable.ArrayBuffer
 import java.io._
 
 abstract class ScoreElem {
-    def outStr():String
+    def scoStr():String
 }
 
 trait StrFns {
@@ -16,7 +16,7 @@ trait StrFns {
 
 class Comments (str:String) extends ScoreElem(){
     
-    override def outStr():String= s";$str"
+    override def scoStr():String= s";$str"
 //  ^[\s]*(\/\/.+)$
 }
 object Comments {
@@ -32,7 +32,7 @@ f2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111   ; Sawtooth
 >
 */
     
-    override def outStr():String= s";$cmt1\n"+code+s";$cmt2\n"
+    override def scoStr():String= s";$cmt1\n"+code+s";$cmt2\n"
 
 }
 object Native extends StrFns{
@@ -57,50 +57,44 @@ object Native extends StrFns{
 }
 
 
-class Measure (bits:Int,num:Int,cmts:String) extends ScoreElem(){ //comments in string, errors
-
+class Measure (str:String) extends ScoreElem(){ //comments in string, errors
 //  m4 1 // comment
-//  (^[m]([0-9]+))[\t ]+([0-9])+([\t ]*\/\/.*)*$
-    
-    override def outStr():String= s";Measure$num  $bits  "+ cmts 
-
+//  (^[m]([0-9]+))[\t ]+([0-9])+([\t ]*\/\/.*)*$    
+    override def scoStr():String= s";$str" 
 }
 
 object Measure {
    def apply(str : String):Measure ={   //delete this     
-        val rcom="""^([^\/]*)(?:\/\/(.*))?$""".r //value and comments
-        val rcom(vl,co)=str
-        val rval="""m([0-9]+)\s+([0-9]+)""".r
-        val rval(bits,num)=vl
+ //       val rcom="""^([^\/]*)(?:\/\/(.*))?$""".r //value and comments
+ //       val rcom(vl,co)=str
+ //       val rval="""m([0-9]+)\s+([0-9]+)""".r
+ //       val rval(bits,num)=vl
  //       Note.curMStart=bits.toInt*(num.toInt-1)
  //       Note.curStart=0
-        new Measure(bits.toInt,num.toInt,co)
+        new Measure(str)
    }
-   def apply(bits:Int,num:Int,cmts:String):Measure ={        
+ /*  def apply(bits:Int,num:Int,cmts:String):Measure ={        
  //       Note.curMStart=bits*(num-1)
  //       Note.curStart=0
         new Measure(bits,num,cmts)
-   }
+   }*/
 }
 
-class Note (st:String, ninst:Int,start:Float,dur:Float,pitch:String,cmts:String) extends ScoreElem(){
+class Note (var name:String ="",var instr:String ="",
+						var start:Double =0.0, var dur:Double =0.0,
+							var pitch:String ="", var params:String ="") extends ScoreElem(){
 /*
 ([rcdefgah]([0-9]*)(#[+-]?|##[+-]?|b[+-]?|bb[+-]?)*)([\t ]+([a-z]+)([0-9]*))*([\t ]*\/\/.*)*$
 */
-    override def outStr():String= {
-		val cmt= if((cmts!=null) && (cmts!="")) s"\t;$st\t$cmts" else s"\t;$st"
-		s"i $ninst \t%.4f\t%.4f\t 0.5 \t $pitch \t  $cmt".formatLocal(java.util.Locale.US,start,dur)
-	}
-
+    def scoStr():String =if(name.startsWith("r"))
+							s";name"
+						else
+							s"$instr \t%.4f\t%.4f\t 0.5\t $pitch \t  $params ;$name".
+																formatLocal(java.util.Locale.US,start,dur)
+	override def toString() = s"$name $pitch"
 }
 
-object Note {
-   var curInstr:ArrayBuffer[String]=ArrayBuffer("1")
-   var curStart:ArrayBuffer[Float]=ArrayBuffer(0f)
-//   var curMStart:Float=0f
-   var curDur:ArrayBuffer[Float]=ArrayBuffer(0f)
-   var curOkt:ArrayBuffer[Int]=ArrayBuffer(8)
-   
+object Note {   
     val lpch=Map("c" ->"00",
 				 "c#"->"01",
 				 "db"->"01",
@@ -124,62 +118,65 @@ object Note {
 				 "r" ->"")
 				 
 //	def durVal(dv:Float)= 4/dv
- 	val durVal = Map( "1" ->4.0f, 
-					  "2" ->2f,
-					  "4" ->1f,
-					  "8" ->0.5f,
-					  "8_3" -> 1f/3f,
-					  "16"->0.25f,
-					  "16_3" -> 0.5f/3f,
-					  "16_6" -> 1f/6f,
-					  "32"->0.125f,
-					  "64"->(1.0/16.0).toFloat)
+ 	val durVal = Map( "1" ->4.0, 
+					  "2" ->2.0,
+					  "4" ->1.0,
+					  "4." ->1.5,
+					  "8" ->0.5,
+					  "8_3" -> 1.0/3.0,
+					  "16"->0.25,
+					  "16_3" -> 0.5/3.0,
+					  "16_6" -> 1.0/6.0,
+					  "32"->0.125,
+					  "64"->1.0/16.0)
+					  
+	class VCur (var curOkt:Int=0,var curDur : Double=0.0,var curTime : Double=0.0, var curInstr:String="i1",
+							var curParams : String = "")
+	val vcur = new ArrayBuffer[VCur]()
  
    def apply(str : String, sco:ArrayBuffer[ScoreElem]):Unit ={
-	val rcom="""^([^\/]*)(?:\/\/(.*))?$""".r //value and comments
-	val pitchex="^([cdefgar#b]+)([0-9]*)".r
-	val inum="^i([0-9]+)".r
-//	val dur="^dur([0-9.]+)".r
+//	val rcom="""^([^\/]*)(?:\/\/(.*))?$""".r //value and comments
+	val pitchex ="^((?:[cdefgar#b]+[0-9]*[|]?)+)".r
+	val pitchex1 ="^([cdefgar#b]+)([0-9]*)".r
+	val inum="^i.+".r
+	val dur="^([0-9._+]+)".r
 //	val st="^st([0-9.]+)".r
-//voices
-    println("string: "+str)
+	val notes = new ArrayBuffer[Note]()
+    //println("string: "+str)
 	val voices=str.split("[|]{2}")
-	for (i <- 0 to voices.size){
-		val v=voices(i)
-		println("v: "+v)
-		if(v !="") {
-			val vdt=v.split(" ").foreach(_.trim)
-			for (j <- 0 to vdt.size){
-				
-			}
+	for (i <- 0 until voices.size){
+	    if(vcur.size < i+1){ vcur += new VCur()
+							 if(i!=0) {
+								vcur(i).curTime = vcur(i-1).curTime
+								vcur(i).curInstr = vcur(i-1).curInstr
+							 }
+						   }
+		val vdt=voices(i).split("[\\s]+")
+		for (j <- 0 until vdt.size){
+			 vdt(j) match{
+				case pitchex(nt) =>{ 
+									vcur(i).curTime=vcur(i).curTime+vcur(i).curDur
+				                    if(vdt.size > 1 && durVal.contains(vdt(1))) vcur(i).curDur = durVal(vdt(1))
+									for(m <- nt.split("[\\s]*[|][\\s]*")){
+										val pitchex1(p,o) = m
+										if(o!="") vcur(i).curOkt=o.toInt
+										notes += new Note(pitch = s"${vcur(i).curOkt}.${lpch(p)}",
+															name = p+vcur(i).curOkt, start = vcur(i).curTime,
+															  dur= vcur(i).curDur )
+									}
+								}
+				case dur(d) => if(j!=1){vcur(i).curParams += " "+d; println("d="+d+" v="+voices(i))}
+				case inum(ins) => vcur(i).curInstr=ins
+				case s:String => vcur(i).curParams += " "+s
+			 }				
 		}
+		notes.foreach((n:Note) => {n.instr=vcur(i).curInstr; n.params =vcur(i).curParams})
+		vcur(i).curParams=""
+		score.mSco ++=notes
+		notes.clear
 	}
-	//.foreach((s:String) =>{s.trim; if(s == null) println("null");if(s =="") println("s")})
-	//println(voices.mkString(";"))
-	//for (v <- voices)
-	//	print(v+"|/\\|")
-	println()
-/*  	var rcom(vl,co)=str
-	if(co!=null && co!="") co="//"+co
-    val vls=vl.split("[ \t]+")
-	var nts=new ArrayBuffer[(Int,String,String)]()
-	for (s <- vls){
-		s match {
-			case pitchex(p,o) => { if (o!="")curOkt=o.toInt; nts+= ((curOkt,lpch(p),s))}
-			case inum(in) => curNinst=in.toInt
-			case dur(nm) => curDur=durVal(nm.toFloat)
-//			case st(nm) => curStart=nm.toFloat
-			case _ =>
-		}
-	}963 666 9231
-	//println(nts)
-	for ((o,p,st) <- nts){
-		if(p!="") sco+=new Note(st,curNinst,curMStart+curStart,curDur,s"$o.$p",co)
-	}
-	curStart+=curDur*/
-   }
+  }
 }
-
 
 object score extends App with StrFns{
 
@@ -200,7 +197,7 @@ object score extends App with StrFns{
             
             if(mSco!=null){
                 for ( x <- mSco ) {
-                    writer.write(x.outStr+"\n")
+                    writer.write(x.scoStr+"\n")
                 }
             }
             writer.close()
@@ -221,10 +218,10 @@ object score extends App with StrFns{
         tstr match {
             case ""=>
 //            case note(_*) => println("note");Note(tstr,mSco)      // delete
-            case measure(m) =>{println(s"measure $m")/*;mSco += Measure(bits.toInt,num.toInt,strOrCms(cmt))*/ }    
+            case measure(m) =>{mSco += Measure(m)}    
 //            case comments(cmt) => {println(s";$cmt");mSco+=Comments(strOrCms(cmt)) }      // delete
             case native(_*) => {println(";native");mSco+=Native(tstr,iter) }       // delete.length>0
-            case _ => println("maybe note");Note(tstr,mSco)
+            case _ => Note(tstr,mSco)
         }
       }
    }   
