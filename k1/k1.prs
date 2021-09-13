@@ -1,0 +1,253 @@
+; c0mments
+
+m1 4 
+d9 16
+e
+f
+g
+
+a
+a8
+c#9
+a8
+
+d9 4.  ||d8 16
+       ||e
+	   ||f
+	   ||g
+	   
+	   ||a
+	   ||a7
+e 8	   ||c#8
+	   ||a7
+
+m2
+f 16   ||d8 8  
+d      
+g      ||e
+e
+
+a      ||f
+f
+e      ||g
+d
+
+c# 8     ||a
+a      ||a
+
+a 4 +   ||a
+       ||a
+
+m3
+a 16  ||a|f
+g
+f      ||a|f
+e
+
+d      ||a|f
+c
+bb8    ||f
+a
+
+bb 8   ||g7
+g9     ||g8|bb
+
+g 4 +  ||g|bb
+       ||g|bb
+	   
+m4
+g 16  ||e|g
+f
+e      ||e|g
+d
+
+c      ||e|g
+bb8
+a      ||e
+g
+
+a 8  ||f7
+f9     ||f8|a
+
+f 4 + ||f|a
+       ||f|a
+
+m5
+f 16   ||d|f
+e
+d      ||d|f
+c
+
+bb8     ||d|f
+a
+g      ||d|f
+f
+
+g 8    ||e7
+e9     ||e8|g
+
+e 4 +  ||e|g
+       ||e|g
+	   
+m6
+e 16   ||a7|e8
+d
+c#     ||a7|e8
+b8
+
+a      ||a7|e8
+g
+f      ||a7
+e
+
+f      ||d7|d8
+d
+g      ||e7
+e
+
+a      ||f
+f
+e      ||g
+d
+
+m7
+c#     ||a
+a7
+d8     ||r
+b7
+
+e8     ||c#8
+c#
+f      ||d
+d
+
+g      ||e
+e
+a      ||f
+f
+
+b      ||g
+g
+c#9    ||a
+a8
+
+m8
+d9     ||b
+b8
+e9     ||c#9
+c#
+
+f      ||d
+d
+g      ||e
+e
+
+a 4   ||f 16
+       ||d
+       ||bb8
+       ||g
+
+g      ||e9
+       ||c#
+	   ||a8
+	   ||c#9
+	   
+m9
+a 4   ||f 16
+       ||d
+       ||bb8
+       ||g
+
+g      ||e9
+       ||c#
+	   ||a8
+	   ||c#9
+	   
+a 4   ||f 16
+       ||d
+       ||bb8
+       ||g
+
+g      ||e9
+       ||c#
+	   ||a8
+	   ||c#9
+m10
+d|f 16 ||d8 8
+d
+g      ||e
+e
+
+a      ||f
+f
+e      ||g
+d
+
+a8|c#9 ||a7
+a8
+d9     ||b7
+b8
+
+e9     ||c#8
+g8
+f      ||a7
+e
+
+m11
+d|f 16 ||d 
+d
+g      ||e
+e
+
+a      ||f
+f
+e      ||g
+d
+
+c#8    ||a
+a7     
+d8     ||b
+b7
+
+e8     ||c#8
+c#
+f      ||d
+d
+
+m12
+g      ||e7 16
+g      ||e8
+f      ||d
+e      ||c#
+
+f 8    ||d 8
+g 16
+f 32   ||bb7
+g
+
+a 16   ||a6 4.
+e
+f
+d
+
+e
+c#     
+f 8    ||d8 16
+       ||b7
+
+m13
+e      ||c#8
+       ||a7
+d      ||b
+       ||g#
+       
+c# 16  ||a
+r 16   ||e
+r 8    ||c#
+       ||e
+       
+r 2    ||a6 4
+       ||r 4
+       
+m14
+

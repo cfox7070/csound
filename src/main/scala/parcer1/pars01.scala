@@ -57,27 +57,14 @@ object Native extends StrFns{
 }
 
 
-class Measure (str:String) extends ScoreElem(){ //comments in string, errors
+class Measure (str:String) extends ScoreElem(){ 
 //  m4 1 // comment
 //  (^[m]([0-9]+))[\t ]+([0-9])+([\t ]*\/\/.*)*$    
     override def scoStr():String= s";$str" 
 }
 
 object Measure {
-   def apply(str : String):Measure ={   //delete this     
- //       val rcom="""^([^\/]*)(?:\/\/(.*))?$""".r //value and comments
- //       val rcom(vl,co)=str
- //       val rval="""m([0-9]+)\s+([0-9]+)""".r
- //       val rval(bits,num)=vl
- //       Note.curMStart=bits.toInt*(num.toInt-1)
- //       Note.curStart=0
-        new Measure(str)
-   }
- /*  def apply(bits:Int,num:Int,cmts:String):Measure ={        
- //       Note.curMStart=bits*(num-1)
- //       Note.curStart=0
-        new Measure(bits,num,cmts)
-   }*/
+   def apply(str : String):Measure = new Measure(str)
 }
 
 class Note (var name:String ="",var instr:String ="",
@@ -123,6 +110,7 @@ object Note {
 					  "4" ->1.0,
 					  "4." ->1.5,
 					  "8" ->0.5,
+					  "8." ->0.75,
 					  "8_3" -> 1.0/3.0,
 					  "16"->0.25,
 					  "16_3" -> 0.5/3.0,
