@@ -116,6 +116,7 @@ object Note {
 					  "16_3" -> 0.5/3.0,
 					  "16_6" -> 1.0/6.0,
 					  "32"->0.125,
+					  "32_3"-> 0.25/3,
 					  "64"->1.0/16.0)
 					  
 	class VCur (var curOkt:Int=0,var curDur : Double=0.0,var curTime : Double=0.0, var curInstr:String="i1",

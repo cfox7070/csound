@@ -53,6 +53,8 @@ instr 2
 
     a1 delay a1, idelay_left
     a2 delay a2, idelay_right
+    
+    denorm a1,a2 ;!!
 
     a1, a2 freeverb a2, a1, iroom_size, iHFDamp
     outs a1 * iamp, a2 * iamp
@@ -65,6 +67,9 @@ endin
 <CsScore>
 
 ;i2 0 90 2.333 0.0223 0.0213 0.4 0.3
+
+i2 0 90 1.333 0.0223 0.0213 0.4 0.97
+
 
 #include "k1.sco"
   
