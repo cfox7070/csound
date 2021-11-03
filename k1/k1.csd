@@ -12,7 +12,7 @@ nchnls = 2
 instr 1
     itail = 0.01
     p3 = p3 + itail
-    idur = p3
+    idur = p3 * p6
     iamp = p4
     ifreq = cpspch(p5)
 
@@ -67,6 +67,8 @@ endin
 <CsScore>
 
 ;i2 0 90 2.333 0.0223 0.0213 0.4 0.3
+
+t 0 75
 
 i2 0 90 1.333 0.0223 0.0213 0.4 0.97
 
