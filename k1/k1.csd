@@ -20,15 +20,25 @@ instr 1
     kenvgate linseg, 1, idur - itail, 1, itail, 0, 0, 0
     kenv = kenv * kenvgate
 
-    a1 vco2 1, ifreq * 2, 0 
-    a2 vco2 1, ifreq, 2, 0.6 + birnd(0.1)
+    if (ifreq < 220) then
+        a1 vco2 1, ifreq * 4, 0 
+        a2 vco2 1, ifreq * 2, 0 
+        ;a2 vco2 1, ifreq, 2, 0.6 + birnd(0.1)
+        a3 vco2 1, ifreq, 4, 0.6 + birnd(0.1)
+        amix = a1 * 0.25 + a2 * 0.25 + a3 * 0.6   
+    else
+        a1 vco2 1, ifreq * 2, 0 
+        ;a2 vco2 1, ifreq, 2, 0.6 + birnd(0.1)
+        a2 vco2 1, ifreq, 4, 0.6 + birnd(0.1)
+        amix = a1 * 0.5 + a2 * 0.5
+    endif
 
     ival1 = 7000 + rnd(3000)
     ival2 = 7000 + rnd(3000)
     kenv2 expseg 16000 + rnd(2000), 2, ival1, 4, 2000, 0, 2000
     kenv3 expseg 16000 + rnd(2000), 2, ival2, 4, 2000, 0, 2000
 
-    amix = a1 * 0.5 + a2 * 0.5
+    
     amix = amix * kenv * iamp
 
     afilter1 moogladder amix, kenv2, 0.4 + rnd(0.1)
@@ -68,9 +78,9 @@ endin
 
 ;i2 0 90 2.333 0.0223 0.0213 0.4 0.3
 
-t 0 75
+;t 0 75
 
-i2 0 90 1.333 0.0223 0.0213 0.4 0.97
+i2 0 55 1.333 0.0223 0.0213 0.4 0.97
 
 
 #include "k1.sco"
