@@ -174,7 +174,7 @@ object Note {
 															name = p+vcur(i).curOkt)                                            
 									}
 								}
-				case tmp(tval) => Tempo.set(vcur(i).curTime,tval.toDouble)
+				case tmp(tval) => Tempo.set(vcur(i).curTime,tval.toDouble + score.tplus)
 				case inum(ins) => vcur(i).curInstr=ins
 				case s:String => { while (vcur(i).curParams.size < (j+1))  
                                         vcur(i).curParams = vcur(i).curParams :+ " "
@@ -197,8 +197,10 @@ object score extends App{
 
       val mSco=ArrayBuffer[ScoreElem]()
       var vprod = -1
+      var tplus =0.0
       
       val varg="^-v([0-9.]+)".r
+      val targ="^-t([0-9.-]+)".r
       
       if(args.length==0 || args(args.size - 1).startsWith("-")){
             println("No file specified")
@@ -207,9 +209,11 @@ object score extends App{
         for(a <- args)
             a match {
                 case varg(v) => vprod = v.toInt
+                case targ(v) => tplus = v.toDouble
                 case _ => 
             }
         println(s"vprod=$vprod")
+        println(s"tplus=$tplus")
         val fname=args(args.size - 1)
         try {
             val src=Source.fromFile(fname)
