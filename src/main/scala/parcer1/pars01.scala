@@ -74,10 +74,9 @@ object Measure {
 }
 
 object Tempo extends ScoreElem(){ 
-   var vals  = new mutable.HashMap[Double,mutable.Set[Double]] with //List with Tupples?
-                                mutable.MultiMap[Double, Double]
-   override def scoStr():String= "t " + vals.toSeq.sortBy(_._1).map{case(k,v) => v.map(k + " " + _).mkString(" ")}.mkString(" ") 
-   def set(k:Double,v:Double) { vals.addBinding (k,v)}
+   var vals  = List[(Double,Double)]()
+   override def scoStr():String= "t " + vals.flatten{case (a,b) => List(a,b)}.mkString(" ") 
+   def set(k:Double,v:Double) { vals = vals :+ (k -> v)}
 }
 
 class Note (var name:String ="",var instr:String ="",
@@ -87,7 +86,7 @@ class Note (var name:String ="",var instr:String ="",
 ([rcdefgah]([0-9]*)(#[+-]?|##[+-]?|b[+-]?|bb[+-]?)*)([\t ]+([a-z]+)([0-9]*))*([\t ]*\/\/.*)*$
 */
     def scoStr():String =if(name.startsWith("r"))
-							s";name"
+							s";$name"
 						else
 							s"$instr \t%.4f\t%.4f\t%.4f\t $pitch \t  ${params.mkString("\t")} \t;$name".
 																formatLocal(java.util.Locale.US,start,dur,vol)
@@ -174,7 +173,8 @@ object Note {
 															name = p+vcur(i).curOkt)                                            
 									}
 								}
-				case tmp(tval) => Tempo.set(vcur(i).curTime,tval.toDouble + score.tplus)
+				case tmp(tval) => Tempo.set(vcur(i).curTime,tval.toDouble * score.tplus)
+                                   // println(s"$i ${vcur(i).curTime} $tval ${score.tplus} ${tval.toDouble + score.tplus}")
 				case inum(ins) => vcur(i).curInstr=ins
 				case s:String => { while (vcur(i).curParams.size < (j+1))  
                                         vcur(i).curParams = vcur(i).curParams :+ " "
@@ -197,30 +197,36 @@ object score extends App{
 
       val mSco=ArrayBuffer[ScoreElem]()
       var vprod = -1
-      var tplus =0.0
+      var tplus =1.0
+      var nname=""
+
       
       val varg="^-v([0-9.]+)".r
       val targ="^-t([0-9.-]+)".r
+      val farg="^-f([0-9.-]+)".r
       
       if(args.length==0 || args(args.size - 1).startsWith("-")){
             println("No file specified")
       }else{ 
-        println(args mkString "||")
+//        println(args mkString "||")
         for(a <- args)
             a match {
                 case varg(v) => vprod = v.toInt
                 case targ(v) => tplus = v.toDouble
+                case farg(v) => nname = v + ".sco"
                 case _ => 
             }
-        println(s"vprod=$vprod")
-        println(s"tplus=$tplus")
+    //    println(s"vprod=$vprod")
+    //    println(s"tplus=$tplus")
         val fname=args(args.size - 1)
+        if(nname == "") {
+            val dotind=fname.lastIndexOf(".")
+            nname=fname.substring(0,if (dotind> -1) dotind else fname.length )+".sco"
+        }
         try {
             val src=Source.fromFile(fname)
             readFile(src.getLines)
             src.close
-            val dotind=fname.lastIndexOf(".")
-            val nname=fname.substring(0,if (dotind> -1) dotind else fname.length )+".sco"
             
             val writer = new PrintWriter(new File(nname ))
             writer.write(Tempo.scoStr + " \n")
@@ -240,7 +246,7 @@ object score extends App{
    
    def readFile(iter:Iterator[String]){
  //      val note="^[cdefgabr].*".r
-      val measure="^([m].+)".r
+      val measure="^[m](.+)".r
  //     val measure="""^[m]([0-9]+)[\t ]+([0-9])+(?:[\t ]*\/\/(.*))?$""".r
       val comments="^;(.*)".r
       val native="^<.*".r
